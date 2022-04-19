@@ -16,6 +16,7 @@
       /* .screen {display: none;} */
       body {margin: 0;}
       #content {margin: 3px;}
+      .screen {display: none;}
       </style>
   </head>
   
@@ -27,17 +28,17 @@
         <a class="mdc-list-item mdc-list-item--activated" href="#" aria-current="page">
           <span class="mdc-list-item__ripple"></span>
           <i class="material-icons mdc-list-item__graphic" aria-hidden="true">inbox</i>
-          <span class="mdc-list-item__text">Inbox</span>
+          <span id = "Main" class="mdc-list-item__text">Main</span>
         </a>
         <a class="mdc-list-item" href="#">
           <span class="mdc-list-item__ripple"></span>
           <i class="material-icons mdc-list-item__graphic" aria-hidden="true">send</i>
-          <span class="mdc-list-item__text">Outgoing</span>
+          <span id = "Rick" class="mdc-list-item__text">Rick and Morty</span>
         </a>
-        <a class="mdc-list-item" href="#">
+        <a class="mdc-list-item"  href="#">
           <span class="mdc-list-item__ripple"></span>
           <i class="material-icons mdc-list-item__graphic" aria-hidden="true">drafts</i>
-          <span class="mdc-list-item__text">Drafts</span>
+          <span id = "South" class="mdc-list-item__text">South Park</span>
         </a>
       </div>
     </div>
@@ -48,35 +49,23 @@
       <div class="mdc-top-app-bar__row">
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
           <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">menu</button>
-          <span class="mdc-top-app-bar__title">Dismissible Drawer</span>
-        </section>
+          <span class="mdc-top-app-bar__title">Main Screen</span>
+        </section>  
       </div>
     </header>
-
+   
     <main class="main-content" id="main-content">
       <div class="mdc-top-app-bar--fixed-adjust">
         App Content
       </div>
+       <section class = "screen Main">H</section>
+      <section class = "screen Rick">T</section>
+      <section class = "screen South">L</section>
     </main>
   </div>
 
 
-    
-    <div id="topnav">
-      <a data-screen="home" >Home</a> |
-      <a data-screen="stuff">Stuff</a> |
-      <a data-screen="settings">Settings</a> |
-      <a data-screen="random">Random</a>
-    </div>
-    
-    <div id="content">
-      <div class="screen" id="home" hidden> Home page content</div>
-      <div class="screen" id="stuff" hidden>Here's some stuff</div>
-      <div class="screen" id="settings" hidden>Settings</div>
-      <div class="screen" id="random" hidden>Random Page</div>
-    </div>
-    
-
+  
 
 
     <script>
@@ -92,34 +81,27 @@ topAppBar.listen('MDCTopAppBar:nav', () => {
       document.querySelector(".body"),addEventListener("click", (e) => {
         drawer.open = false;
       });
+
+
+const listEl = document.querySelector('.mdc-drawer .mdc-list');
+const mainContentEl = document.querySelector('.main-content');
+let a = document.querySelector(".mdc-list-item--activated");
+let current = a.querySelector(".mdc-list-item__text").id;
+      document.querySelector("."+current).style.display = "block";
+listEl.addEventListener('click', (event) => {
+  //console.log(document.querySelector(".screen"));
+   a = document.querySelector(".mdc-list-item--activated")
+  let next =a.querySelector(".mdc-list-item__text").id
+  if(current != next){
+  document.querySelector("."+next).style.display = "block";
+  document.querySelector("."+current).style.display = "none";
+  }
+  current = next;
+  
+  //console.log(document.querySelector("."+b));
+});
+
       
-
-      document.querySelector("#home").removeAttribute("hidden");
-
-      let navAnchors = document.querySelectorAll("div#topnav a");
-
-      navAnchors.forEach ( (anchor) => {
-
-        anchor.addEventListener ("click", (event) => {
-
-          document.querySelectorAll(".screen").forEach( (screen) => {
-            screen.setAttribute("hidden", true)
-          });
-
-
-          // read screen attribute
-          let target = event.target.getAttribute("data-screen");
-
-          // find target screen
-          let targetScreen = document.querySelector("#" + target);
-
-          // show it
-          targetScreen.removeAttribute("hidden");
-
-        })
-
-
-      });
 
 
     </script>
