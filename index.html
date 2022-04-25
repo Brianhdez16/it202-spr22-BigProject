@@ -5,9 +5,15 @@
   <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="manifest" href="/manifest.webmanifest">
+    <script>
+      if('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+      };
+    </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>repl.it</title>
+  <title>Big Project</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
   <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 
@@ -34,21 +40,22 @@
       display: none;
     }
 
-      .dark{
-        background-color: black;
-        color: white;
-      }
-      .light{
-        background-color: white;
-        color: black;
-      }
+    .dark {
+      background-color: black;
+      color: white;
+    }
+
+    .light {
+      background-color: white;
+      color: black;
+    }
   </style>
 </head>
 
 <body>
 
   <aside class="mdc-drawer mdc-drawer--dismissible">
-    <div class="mdc-drawer__content">
+    <div id="drawerC" class="mdc-drawer__content">
       <div class="mdc-list">
         <a class="mdc-list-item mdc-list-item--activated" href="#" aria-current="page">
           <span class="mdc-list-item__ripple"></span>
@@ -87,9 +94,52 @@
     <main class="main-content" id="main-content">
       <div class="mdc-top-app-bar--fixed-adjust">
       </div>
-      <section class="screen Main">H</section>
+      <section class="screen Main">
+        <div id="chart_div">
+          <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+          <script type="text/javascript">
+            google.charts.load('current', {'packages': ['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+
+              let endpointR = "https://rickandmortyapi.com/api/character?page=1";
+              let endpointS = "https://spapi.dev/api/characters?page=1"
+
+              var options = {
+                'title': 'Number of Characters',
+                'width': 500,
+                'height': 500
+              };
+
+              fetch(endpointR)
+                .then((response) => {
+                  return response.json()
+                })
+                .then((json) => {
+                  let data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Type');
+                  data.addColumn('number', 'Count');
+                  data.addRow(json.info[0],json.info.count);
+                  var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                  chart.draw(data, options);
+                  })
+              fetch(endpointS)
+                .then((response) => {
+                  return response.json()
+                })
+                .then((json) => {
+                  let data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Type');
+                  data.addColumn('number', 'Count');
+                  data.addRow(null, json.meta.total)
+                  })
+                   
+            }
+          </script>
+        </div>
+      </section>
       <section class="screen Rick"></section>
-      <section class="screen South">L</section>
+      <section class="screen South"></section>
       <section class="screen Setting"></section>
     </main>
   </div>
@@ -142,11 +192,15 @@
     //Same Character Every Time    
     let page = Math.floor((Math.random() * 42) + 1);
     let character = Math.floor((Math.random() * 20) + 1);
+    let pageS = Math.floor((Math.random() * 20) + 1);
+    let characterS = Math.floor((Math.random() * 10) + 1);
     if (page == 42) {
       character = Math.floor((Math.random() * 6) + 1);
     }
     let once = true;
+    let twice = true;
     listEl.addEventListener('click', (event) => {
+      console.log(document.querySelector(".mdc-drawer--open"));
       active = document.querySelector(".mdc-list-item--activated")
       let next = active.querySelector(".mdc-list-item__text").id
       if (current != next) {
@@ -156,6 +210,9 @@
       current = next;
 
       if (current == "Rick") {
+
+        document.querySelector("#basic-switch").style.display = "none";
+        document.querySelector("#label-switch").style.display = "none";
         //Different Character Every Time  
         // let page = Math.floor((Math.random() * 42)+1);
         // let character = Math.floor((Math.random() * 20)+ 1);
@@ -194,6 +251,44 @@
           })
 
       }
+      if (current == "South") {
+        document.querySelector("#basic-switch").style.display = "none";
+        document.querySelector("#label-switch").style.display = "none";
+        if (twice) {
+          let rUrl = "https://spapi.dev/api/characters?page=";
+          let tPage = pageS.toString();
+          let url = rUrl.concat(tPage);
+          fetch(url)
+            .then((response) => {
+              return response.json();
+            })
+            .then((json) => {
+              console.log(json.data[characterS])
+              let h = document.createElement("p");
+              let t = document.createTextNode("Name: " + json.data[characterS].name);
+              h.appendChild(t);
+              document.querySelector("." + current).appendChild(h);
+              h = document.createElement("p");
+              t = document.createTextNode("Age: " + json.data[characterS].age);
+              h.appendChild(t);
+              document.querySelector("." + current).appendChild(h);
+              h = document.createElement("p");
+              t = document.createTextNode("Occupation: " + json.data[characterS].occupation);
+              h.appendChild(t);
+              document.querySelector("." + current).appendChild(h);
+              h = document.createElement("p");
+              t = document.createTextNode("Sex: " + json.data[characterS].sex);
+              h.appendChild(t);
+              document.querySelector("." + current).appendChild(h);
+              h = document.createElement("p");
+              t = document.createTextNode("Religion: " + json.data[characterS].religion);
+              h.appendChild(t);
+              document.querySelector("." + current).appendChild(h);
+
+              twice = false;
+            });
+        }
+      }
       if (current == "Setting") {
         document.querySelector("#basic-switch").style.display = "block";
         document.querySelector("#label-switch").style.display = "block";
@@ -211,6 +306,7 @@
           else {
             let mode = arr[0]["value"];
             document.querySelector("body").className = mode;
+            document.querySelector("#drawerC").className = mode;
             if (mode == "dark") {
               mSwitch.selected = true;
             }
@@ -219,10 +315,11 @@
         document.querySelector(".mdc-switch"), addEventListener("click", (e) => {
           let newMode = mSwitch.selected ? "dark" : "light";
           document.querySelector("body").className = newMode;
+          document.querySelector("#drawerC").className = newMode;
+
           db.settings.put({name: "mode", value: newMode});
         })
       }
-
     });//END CLICK HANDLER
   </script>
 
