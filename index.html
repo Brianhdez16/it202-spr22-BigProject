@@ -6,11 +6,11 @@
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="manifest" href="/manifest.webmanifest">
-    <script>
-      if('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-      };
-    </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    };
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Big Project</title>
@@ -49,13 +49,17 @@
       background-color: white;
       color: black;
     }
+
+    #map {
+      height: 50%;
+    }
   </style>
 </head>
 
 <body>
 
-  <aside class="mdc-drawer mdc-drawer--dismissible">
-    <div id="drawerC" class="mdc-drawer__content">
+  <aside id = "drawerC" class="mdc-drawer mdc-drawer--dismissible">
+    <div class="mdc-drawer__content">
       <div class="mdc-list">
         <a class="mdc-list-item mdc-list-item--activated" href="#" aria-current="page">
           <span class="mdc-list-item__ripple"></span>
@@ -94,50 +98,38 @@
     <main class="main-content" id="main-content">
       <div class="mdc-top-app-bar--fixed-adjust">
       </div>
-      <section class="screen Main">
-        <div id="chart_div">
-          <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-          <script type="text/javascript">
-            google.charts.load('current', {'packages': ['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
+      <section  class="screen Main">H</section>
+      <script>
+    </script>
+      <div id="map">Hello</div>
+      <script
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOqCX7LfVJ6wuDbsgXLliTU1jPB6e_72Q&callback=initMap&v=weekly"
+          async></script>
+        <script>
+         //  let map;
+         //   function initMap() {
+         //     map = new google.maps.Map(document.getElementById("map"), {
+         //       center: {lat: 41.8696, lng: -87.6496},
+         //       zoom: 15,
+         //     });
+            // navigator.geolocation.getCurrentPosition((position) => {
+            //   map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude});
+            // });
 
-              let endpointR = "https://rickandmortyapi.com/api/character?page=1";
-              let endpointS = "https://spapi.dev/api/characters?page=1"
-
-              var options = {
-                'title': 'Number of Characters',
-                'width': 500,
-                'height': 500
-              };
-
-              fetch(endpointR)
-                .then((response) => {
-                  return response.json()
-                })
-                .then((json) => {
-                  let data = new google.visualization.DataTable();
-                  data.addColumn('string', 'Type');
-                  data.addColumn('number', 'Count');
-                  data.addRow(json.info[0],json.info.count);
-                  var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-                  chart.draw(data, options);
-                  })
-              fetch(endpointS)
-                .then((response) => {
-                  return response.json()
-                })
-                .then((json) => {
-                  let data = new google.visualization.DataTable();
-                  data.addColumn('string', 'Type');
-                  data.addColumn('number', 'Count');
-                  data.addRow(null, json.meta.total)
-                  })
-                   
-            }
-          </script>
-        </div>
-      </section>
+            // navigator.geolocation.watchPosition((position) => {
+            //   const circ = new google.maps.Circle({
+            //     strokeColor: "#FF0000",
+            //     strokeOpacity: 0.8,
+            //     strokeWeight: 2,
+            //     fillColor: "#FF0000",
+            //     fillOpacity: 0.35,
+            //     map,
+            //     center: {lat: position.coords.latitude, lng: position.coords.longitude},
+            //     radius: 10,
+            //   });
+            // });
+         // }
+        </script>
       <section class="screen Rick"></section>
       <section class="screen South"></section>
       <section class="screen Setting"></section>
@@ -200,7 +192,7 @@
     let once = true;
     let twice = true;
     listEl.addEventListener('click', (event) => {
-      console.log(document.querySelector(".mdc-drawer--open"));
+      //console.log(document.querySelector(".mdc-drawer--open"));
       active = document.querySelector(".mdc-list-item--activated")
       let next = active.querySelector(".mdc-list-item__text").id
       if (current != next) {
@@ -306,7 +298,7 @@
           else {
             let mode = arr[0]["value"];
             document.querySelector("body").className = mode;
-            document.querySelector("#drawerC").className = mode;
+            document.querySelector("#drawerC").classList.add(mode);
             if (mode == "dark") {
               mSwitch.selected = true;
             }
@@ -315,7 +307,14 @@
         document.querySelector(".mdc-switch"), addEventListener("click", (e) => {
           let newMode = mSwitch.selected ? "dark" : "light";
           document.querySelector("body").className = newMode;
-          document.querySelector("#drawerC").className = newMode;
+          if(newMode == "dark"){
+            document.querySelector("#drawerC").classList.remove("light");
+            document.querySelector("#drawerC").classList.add("dark");
+          }
+          else{
+            document.querySelector("#drawerC").classList.remove("dark");
+            document.querySelector("#drawerC").classList.add("light");
+          }
 
           db.settings.put({name: "mode", value: newMode});
         })
